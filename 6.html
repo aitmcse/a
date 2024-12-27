@@ -16,7 +16,7 @@ table {
         input[type="button"] {
             width: 100%;
             padding: 20px 40px;
-            background-color: rgb(128, 69, 74);
+            background-color: green;
             color: white;
             font-size: 24px;
             font-weight: bold;
@@ -78,7 +78,7 @@ table {
         <td><input type="button" value="^" onclick="addPower()"></td>
         <td><input type="button" value="^2" onclick="square()"></td>
         <td><input type="button" value="√" onclick="squareroot()"></td>
-        <td><input type="button" value="." onclick="addValue('.')"></td>
+        <td><input type="button" value=")" onclick="addValue(')')"></td>
       </tr>
     </table>
   </form>
@@ -96,7 +96,7 @@ table {
 
     function calculate() {
       try {
-      document.calculator.result.value = eval(document.calculator.result.value.replace(/\^/g, ''));
+      document.calculator.result.value = eval(document.calculator.result.value.replace(/\^/g, '**'));
       } catch (e) {
         alert('Invalid expression');
         clearResult();
