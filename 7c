@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <title>Simple Converter</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20%; }
+        textarea{width: 87%; padding: 40px;}
+        input, button { width: 100%; margin: 10px 0; padding: 20px; }
+        pre { padding: 10px; background: #f0f0f0; display: none; }
+        button { background: #007BFF; color: #fff; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .a{padding: 20px;}
+    
+        .container{padding: 20px; background-color: antiquewhite;}
+    </style>
+</head>
+
+<body>
+    <div class="container">
+    <h1>Simple Converter</h1>
+
+    <h2>1. Convert JSON to Object</h2>
+    <textarea id="jsonInput" placeholder="Enter JSON"></textarea>
+    <button onclick="convertJsonToObject()">Convert</button>
+    <pre id="jsonOutput"></pre>
+
+    <h2>2. JSON Date to String</h2>
+    <textarea id="jsonDateInput" placeholder='Enter {"date":"yyyy-mm-dd"}'></textarea>
+    <button onclick="convertJsonToDate()">Convert</button>
+    <pre id="jsonDateOutput"></pre>
+
+    <h2>3. JSON to CSV</h2>
+    <textarea id="jsonCsvInput" placeholder="Enter JSON array"></textarea>
+    <button onclick="convertJsonToCsv()">JSON to CSV</button>
+    <pre id="csvOutput"></pre>
+    <textarea id="csvInput" placeholder="Enter CSV"></textarea>
+    <button onclick="convertCsvToJson()">CSV to JSON</button>
+    <pre id="jsonCsvOutput"></pre>
+
+    <h2>4. Create Hash</h2>
+    <textarea id="hashInput" placeholder="Enter text" class="a"></textarea>
+    <button onclick="createHash()">Hash</button>
+    <pre id="hashOutput"></pre>
+    
+    
+    
+</div>
+
+    <script>
+        function showOutput(id, text) {
+            const output = document.getElementById(id);
+            output.textContent = text;
+            output.style.display = 'block';
+        }
+
+        function convertJsonToObject() {
+            try {
+                const input = JSON.parse(document.getElementById('jsonInput').value);
+                showOutput('jsonOutput', JSON.stringify(input, null, 2));
+            } catch { showOutput('jsonOutput', 'Invalid JSON'); }
+        }
+
+        function convertJsonToDate() {
+            try {
+                const { date } = JSON.parse(document.getElementById('jsonDateInput').value);
+                showOutput('jsonDateOutput', new Date(date).toString());
+            } catch { showOutput('jsonDateOutput', 'Invalid JSON or Date'); }
+        }
+
+        function convertJsonToCsv() {
+            try {
+                const data = JSON.parse(document.getElementById('jsonCsvInput').value);
+                const keys = Object.keys(data[0]);
+                const csv = [keys.join(','), ...data.map(obj => keys.map(k => obj[k]).join(','))].join('\n');
+                showOutput('csvOutput', csv);
+            } catch { showOutput('csvOutput', 'Invalid JSON'); }
+        }
+
+        function convertCsvToJson() {
+            try {
+                const [header, ...rows] = document.getElementById('csvInput').value.split('\n');
+                const keys = header.split(',');
+                const json = rows.map(row => row.split(',').reduce((obj, val, i) => ({ ...obj, [keys[i]]: val }), {}));
+                showOutput('jsonCsvOutput', JSON.stringify(json, null, 2));
+            } catch { showOutput('jsonCsvOutput', 'Invalid CSV'); }
+        }
+
+        function createHash() {
+            const input = document.getElementById('hashInput').value;
+            if (input) showOutput('hashOutput', CryptoJS.SHA256(input).toString());
+            else showOutput('hashOutput', 'Input is empty');
+        }
+    </script>
+</body>
+
+</html>
