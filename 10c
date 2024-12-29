@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AJAX Examples</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif;
+    
+           background-color: #f4f4f9; }
+        h1 { text-align: center;
+             color: #333;
+              padding: 20px 0; }
+        #content { max-width: 600px; 
+            margin: 20px auto;
+             padding:20px;
+              background: #fff;
+               border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 50%; }
+        button { padding: 10px 15px;
+             margin: 12px; 
+             border: none;
+              border-radius: 5px; 
+              background: #007bff; color: #fff;
+               cursor: pointer;
+            width: 95%; }
+        button:hover { background: #0056b3; }
+        #output { display: none;
+             padding: 10px; 
+             margin-top: 20px; 
+             border-radius: 5px; 
+             white-space: pre-wrap;
+              max-height: 300px; 
+              overflow-y: auto; }
+        #output.plain { background-color: #f0f8ff; }
+        #output.jquery { background-color: #b6edd2; }
+        #output.json { background-color: #fffaf0; }
+        #output.parse { background-color: #fff0f5; }
+    </style>
+</head>
+<body>
+    <h1>AJAX Examples</h1>
+    <div id="content">
+        <button id="plain-ajax-btn">Load Text (Plain AJAX)</button>
+        <button id="jquery-ajax-btn">Load Text (jQuery AJAX)</button>
+        <button id="jquery-json-btn">Load JSON (jQuery getJSON)</button>
+        <button id="parse-json-btn">Load and Parse JSON (jQuery get)</button>
+        <div id="output"></div>
+    </div>
+    <script>
+        function showOutput(className, text) {
+            const output = $('#output');
+            output.text(text).removeClass().addClass('plain').addClass(className).show();
+        }
+
+        $('#plain-ajax-btn').click(function() {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', 'textfile.txt', true);
+            xhr.onload = function() {
+                showOutput('plain', xhr.status === 200 ? xhr.responseText : 'Error loading file.');
+            };
+            xhr.send();
+        });
+
+        $('#jquery-ajax-btn').click(function() {
+            $.ajax({
+                url: 'textfile.txt',
+                method: 'GET',
+                success: data => showOutput('jquery', data),
+                error: () => showOutput('jquery', 'Error loading file.')
+            });
+        });
+
+        $('#jquery-json-btn').click(function() {
+            $.getJSON('data.json')
+                .done(data => showOutput('json', JSON.stringify(data, null, 2)))
+                .fail(() => showOutput('json', 'Error loading JSON.'));
+        });
+
+        $('#parse-json-btn').click(function() {
+            $.get('data.json')
+                .done(data => {
+                    try {
+                        const jsonData = typeof data === 'string' ? JSON.parse(data) : data;
+                        showOutput('parse', JSON.stringify(jsonData, null, 2));
+                    } catch (e) {
+                        showOutput('parse', 'Error parsing JSON: ' + e.message);
+                    }
+                })
+                .fail(() => showOutput('parse', 'Error loading JSON.'));
+        });
+    </script>
+</body>
+</html>
